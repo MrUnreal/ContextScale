@@ -194,7 +194,12 @@
     function updateTextSection() {
         const text = userText.value.trim();
         const words = text ? text.split(/\s+/).length : 0;
-        const estTokens = Math.round(words * TOKENS_PER_WORD);
+        // Better token estimation: account for subword tokenization
+        // Average English token is ~4 characters. Long/unusual words get split into multiple tokens.
+        const charBasedTokens = Math.ceil(text.length / 4);
+        const wordBasedTokens = Math.round(words * TOKENS_PER_WORD);
+        // Use the higher estimate — catches long single words and gibberish
+        const estTokens = text ? Math.max(wordBasedTokens, charBasedTokens) : 0;
 
         textStats.innerHTML = `
             <span class="text-stat">Words: <strong>${formatNumber(words)}</strong></span>
