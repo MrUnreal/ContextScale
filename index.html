@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ContextScale — How Big Is 128K Tokens, Really?</title>
+    <meta name="description" content="An interactive visualization that makes AI context windows concrete. See what actually fits in GPT-4o, Claude, Gemini, and more.">
+    <meta name="keywords" content="context window comparison, how many tokens LLM, 128K vs 1M context, AI context window size, token count visualizer">
+    <meta property="og:title" content="ContextScale — How Big Is 128K Tokens, Really?">
+    <meta property="og:description" content="128K tokens = 96K words = the entire Hobbit. Interactive scale of every AI model's context window.">
+    <meta property="og:type" content="website">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>📏 ContextScale</h1>
+        <p class="subtitle">How Big Is 128K Tokens, <em>Really?</em></p>
+        <p class="subtitle-detail">Making the abstract concrete — see what actually fits inside every AI model's context window.</p>
+    </header>
+
+    <section class="hero-stat" id="hero-stat">
+        <div class="hero-number" id="hero-number">128,000</div>
+        <div class="hero-label">tokens</div>
+        <div class="hero-equals">=</div>
+        <div class="hero-comparison" id="hero-comparison"></div>
+    </section>
+
+    <!-- Slider Section -->
+    <section class="slider-section">
+        <div class="slider-header">
+            <h2>🔎 Explore: What fits in <span id="slider-tokens-label">128K</span> tokens?</h2>
+            <p class="slider-hint">Drag the slider or click a model below</p>
+        </div>
+        <div class="slider-container">
+            <input type="range" id="token-slider" min="0" max="100" value="40" step="0.1">
+            <div class="slider-value" id="slider-value">128,000 tokens</div>
+            <div class="slider-words" id="slider-words">≈ 96,000 words</div>
+        </div>
+        <div class="fits-container" id="fits-container"></div>
+    </section>
+
+    <!-- Model Comparison -->
+    <section class="model-section">
+        <h2>📐 Every Model's Context Window, to Scale</h2>
+        <p class="section-desc">Click any model to explore what fits inside its context window</p>
+        <div class="model-bars" id="model-bars"></div>
+    </section>
+
+    <!-- Your Text Section -->
+    <section class="your-text-section">
+        <h2>📋 Check Your Own Text</h2>
+        <p class="section-desc">Paste text below to see which models can handle it</p>
+        <div class="text-input-container">
+            <textarea id="user-text" placeholder="Paste your text here..."></textarea>
+            <div class="text-stats" id="text-stats">
+                <span class="text-stat">Words: <strong>0</strong></span>
+                <span class="text-stat">Est. Tokens: <strong>0</strong></span>
+            </div>
+        </div>
+        <div class="model-fit-grid" id="model-fit-grid"></div>
+    </section>
+
+    <!-- Fun Facts -->
+    <section class="facts-section">
+        <h2>🤯 Mind-Blowing Comparisons</h2>
+        <div class="facts-grid" id="facts-grid"></div>
+    </section>
+
+    <footer>
+        <p>Data sourced from official model documentation &middot; Token counts estimated at ~1.33 tokens per word</p>
+        <p class="footer-note">Built with D3.js &middot; Part of the AI Ecosystem Tools portfolio</p>
+    </footer>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
