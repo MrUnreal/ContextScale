@@ -1,6 +1,15 @@
 // ContextScale — app.js
 (async function () {
-    const { models, comparisons } = await d3.json('data.json');
+    let models, comparisons;
+    try {
+        const jsonData = await d3.json('data.json');
+        models = jsonData.models;
+        comparisons = jsonData.comparisons;
+    } catch (e) {
+        document.body.innerHTML = '<div style="text-align:center;padding:60px 20px;color:#7878a0;font-size:1rem;">Failed to load data. Please try refreshing the page.</div>';
+        console.error('Failed to load data:', e);
+        return;
+    }
 
     // Sort models by context size descending
     models.sort((a, b) => b.tokens - a.tokens);
@@ -116,7 +125,7 @@
             const pct = Math.min(100, (ratio) * 100);
 
             const card = document.createElement('div');
-            card.className = `fit-card ${fits ? (fitsCount >= 1 ? 'fits' : 'partial') : 'nope'}`;
+            card.className = `fit-card ${fits ? 'fits' : 'nope'}`;
 
             let statusHTML;
             if (fitsCount > 1) {
@@ -179,9 +188,13 @@
 
             modelBarsEl.appendChild(row);
 
-            // Animate bar
+            // Animate bar and handle label overflow
             requestAnimationFrame(() => {
-                row.querySelector('.model-bar-fill').style.width = `${pct}%`;
+                const fill = row.querySelector('.model-bar-fill');
+                fill.style.width = `${pct}%`;
+                // Hide inner label when bar is too narrow to fit it
+                const span = fill.querySelector('span');
+                if (pct < 12) span.style.display = 'none';
             });
         });
     }
@@ -194,12 +207,13 @@
     function updateTextSection() {
         const text = userText.value.trim();
         const words = text ? text.split(/\s+/).length : 0;
-        // Better token estimation: account for subword tokenization
-        // Average English token is ~4 characters. Long/unusual words get split into multiple tokens.
-        const charBasedTokens = Math.ceil(text.length / 4);
+        // Better token estimation: use word-based for normal text, char-based for unusual inputs
         const wordBasedTokens = Math.round(words * TOKENS_PER_WORD);
-        // Use the higher estimate — catches long single words and gibberish
-        const estTokens = text ? Math.max(wordBasedTokens, charBasedTokens) : 0;
+        const charBasedTokens = Math.ceil(text.length / 4);
+        // Use char-based when average word length is abnormally long (gibberish/code),
+        // otherwise use word-based which is more accurate for natural language
+        const avgWordLen = words > 0 ? text.length / words : 0;
+        const estTokens = text ? (avgWordLen > 8 ? charBasedTokens : Math.max(wordBasedTokens, charBasedTokens)) : 0;
 
         textStats.innerHTML = `
             <span class="text-stat">Words: <strong>${formatNumber(words)}</strong></span>
